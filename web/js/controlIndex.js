@@ -136,14 +136,18 @@ ctx.fill();
 
 // ctx.fill();
 
-
-
+/**
+ * funcion get para el recibir datos
+ */
 function handleClick(event){
 
+    //obtener el texto
     var str = document.getElementById("txtInsert").value;
 
+    console.log("input: "+str);
+
     var http = new XMLHttpRequest();
-    var url = ' http://localhost:8090/altavista/getOptions?word='+str;
+    var url = 'http://localhost:8091/radix';
     var params = 'orem=ipsum&name=binny';
     http.open('GET', url, true);
 
@@ -157,4 +161,76 @@ function handleClick(event){
         }
     }
     http.send(params);
+}
+
+function enviar(){
+
+  //obtener el texto
+  var str = document.getElementById("txtInsert").value;
+
+  console.log("input: "+str);
+
+  var http = new XMLHttpRequest();
+  var url = 'http://localhost:8091/radix/getOptions?word='+str;
+  var params = 'orem=ipsum&name=binny';
+  http.open('GET', url, true);
+
+  http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+  http.onreadystatechange = function() {
+      if(http.readyState == 4 && http.status == 200) {
+          console.log(http.responseText);
+          alert(http.responseText);
+
+      }
+  }
+  http.send(params);
+
+}
+/**
+ * funcion POST para enviar data al servidor
+ */
+function envio(){
+
+/*var http = new XMLHttpRequest();
+var url = 'http://localhost:8091/radix';
+var params = 'puntos=[a,b]&nomre=gato';
+
+http.open('POST', url, true);
+
+//Send the proper header information along with the request
+http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+http.onreadystatechange = function() {//Call a function when the state changes.
+    if(http.readyState == 4 && http.status == 200) {
+        alert(http.responseText);
+    }
+}
+http.send(params);
+*/
+
+/*
+ var str = "{ value : value }";
+ console.log(">> "+str);
+*/
+
+ var http = new XMLHttpRequest();
+ var url = 'http://localhost:8091/radix/arrays';
+
+ http.open("POST", url, true);
+
+ http.setRequestHeader('Content-Type', 'application/json');
+
+ // http.onreadystatechange = function() {//Call a function when the state changes.
+ //     if(http.readyState == 4 && http.status == 200) {
+ //         alert(http.responseText);
+ //     }
+ // }
+
+ http.send(JSON.stringify({
+	"points": [{ "x": 5 , "y":6} ]
+ }));
+
+ console.log("here"+http.responseText);
+
 }
