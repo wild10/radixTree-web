@@ -1,4 +1,4 @@
-Radix web Demo Tree
+RadixTree web Demo 
 ========
 #### Requirements
 ```sh
