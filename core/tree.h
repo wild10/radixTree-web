@@ -172,6 +172,11 @@ public:
         return false;
     }
 
+    bool find(string word){
+    return find(word,root);
+  }
+
+
     size_t find(
             string & str,
             Node * & node,

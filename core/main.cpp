@@ -9,7 +9,6 @@ int main(int argc, char *argv[]) {
 
       int *word;
       int *start;
-      //cout<<"word "<<&word<<" start "<<start<<endl;
       Tree *t=new Tree();
       int a,b,c,d;
       t->add("A",a,b);
@@ -18,8 +17,15 @@ int main(int argc, char *argv[]) {
       t->add("NANA",a,b);
       t->add("ANANA",a,b);
       t->add("BANANA",a,b);
-      //cout << "arbol " << t->graphviz()<<endl;
-      cout << t->printjson()<<endl;
+    cout << "arbol " << t->graphviz()<<endl;
+    cout << t->printjson()<<endl;
+
+
+    cout << "encontro: "<< t->find("A")<<endl;
+    cout << "encontro: "<< t->find("Z")<<endl;
+    cout << "encontro: "<< t->find("ANANA")<<endl;
+
+    cout << t->printjson()<<endl;
       //t->print();
       //stringstream  str;
       //str<<new Tree();
