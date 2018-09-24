@@ -176,6 +176,7 @@ public:
     }
 
     string graphviz(){
+        //Node * node;
         string str = "digraph G {\n";
         string tree = "";
         graphviz(root, tree);
@@ -185,7 +186,7 @@ public:
 
     void printjson(Node * & node, string & tree) {
         if ( ! node) {
-            return;
+            return ;
         }
         string name;
         char ss[100];
@@ -201,6 +202,13 @@ public:
             }
         }
         if (node->isWord) {
+
+            // cout<<" --> "<<parentStr<<endl;
+            if(parentStr == "") parentStr = "\"\"";
+            tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name + ",\"padre\":"+parentStr+"},";
+        }else{
+             // cout<<" --> "<<parentStr<<endl;
+            if(parentStr == "") parentStr = "\"\"";
             tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name + ",\"padre\":"+parentStr+"},";
         }
 

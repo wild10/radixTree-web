@@ -5,14 +5,15 @@
 #include <utility>
 //Models for rtree
 // #include "models/Polygon.cpp"
-// #include "models/Region.cpp"
+
+#include "../core/tree.h"
 #include "../radixset.hpp"
 // Added for the json-example
 #define BOOST_SPIRIT_THREADSAFE
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-// Added for the default_resource example
+
 #include <algorithm>
 #include <boost/filesystem.hpp>
 #include <fstream>
@@ -25,29 +26,44 @@ using namespace std;
 using namespace boost::property_tree;
 
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
-struct Point{
-  int x;
-  int y;
-};
+
+
+
+
 
 int main() {
+    
+clasTest radix = clasTest();
+
+    
+    
+    Tree* t = new Tree();
+    // crear tree
+    int a, b;
+
+
+/*
+    t->add("ROMARIO",a,b);
+      t->add("RAMIRO",a,b);
+      t->add("CARCO",a,b);
+     cout << t->printjson() <<endl;
+
+*/
+
     HttpServer server;
-    server.config.port = 8091;
+    server.config.port = 8091;    
 
-    radixset radix = radixset("mundo");
-
-    int count = 1;
-    //Get | get regions and polygons
+    //Get | radix
     server.resource["^/radix$"]["GET"] = [&radix](shared_ptr<HttpServer::Response> response, shared_ptr<HttpServer::Request> request) {
         stringstream stream;
         SimpleWeb::CaseInsensitiveMultimap header;
-        stream << radix.text;
+        stream << radix.str;
         response->write_get(stream,header);
 
     };
 
 
-    //Post | add polygons
+ /*   //Post | add polygons
     server.resource["^/radix$"]["POST"] = [&radix](
             shared_ptr<HttpServer::Response> response,
             shared_ptr<HttpServer::Request> request
@@ -61,7 +77,7 @@ int main() {
             read_json(request->content, pt);
             string newcadena = pt.get<string>("cadena");
             radix.text = newcadena;
-            /*
+            
             for (boost::property_tree::ptree::value_type& rowPair:pt.get_child("polygon")) {
                 for (boost::property_tree::ptree::value_type& itemPair : rowPair.second) {
                     int value = itemPair.second.get_value<int>();
@@ -74,7 +90,7 @@ int main() {
             }
             int identifier_polygon = count++;
             tree->insert(new Polygon<dtype>(pv, identifier_polygon));
-            json_string = "{\"status\": true}";*/
+            json_string = "{\"status\": true}";
             json_string = "{\"status\": true}";
             // json_string += "{ cadena: " + radix.respuestaHola(word) + "}";
             stream << json_string;
@@ -85,9 +101,11 @@ int main() {
                 e.what()
             );
         }
-    };
+    };*/
+/*
     vector<int> v;
     vector<Point> pv;
+
     //Post | add polygons
     server.resource["^/radix/arrays$"]["POST"] = [&radix,&v,&pv](
             shared_ptr<HttpServer::Response> response,
@@ -126,9 +144,10 @@ int main() {
             );
         }
     };
+*/
 
-    /* http://localhost:8090/altavista/getOptions?word=test */
-    server.resource["^/radix/getOptions$"]["GET"] = [&radix](
+    /* http://localhost:8090/radix/getOptions?word=test */
+    server.resource["^/radix/getOptions$"]["GET"] = [t,&a,&b](
         shared_ptr<HttpServer::Response> response,
         shared_ptr<HttpServer::Request> request
         ) {
@@ -142,15 +161,22 @@ int main() {
             for(auto &field : query_fields)
                 word = field.second;
 
+            // radix.prueba(word);
 
-            // stream << "HOLA MUNDO";
-            // cout << vectorToJson(list) << endl;
-            // stream << vectorToJson(list);
-            radix.prueba(word);
-            cout<<"world -->"<<word<<endl;
-            stream << radix.text;
+
+             cout<<"word: ->"<< word <<endl;
+             // int c, d;   
+             
+              t->add(word, a, b);
+               
+             cout<< t->printjson() <<endl;
+
+            // stream << radix.test(word);
+            stream << t->printjson();
+
+            // cout<<"jason ->" << strjason(word) <<endl;
             response->write_get(stream, header);
-            // delete list;
+
 
         } catch (const exception &e) {
             response->write(

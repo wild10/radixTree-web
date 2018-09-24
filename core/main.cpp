@@ -11,14 +11,14 @@ int main(int argc, char *argv[]) {
       int *start;
       Tree *t=new Tree();
       int a,b,c,d;
-      t->add("A",a,b);
-      t->add("NA",a,b);
-      t->add("ANA",a,b);
-      t->add("NANA",a,b);
-      t->add("ANANA",a,b);
-      t->add("BANANA",a,b);
-    //cout << "arbol " << t->graphviz()<<endl;
-    cout << t->printjson()<<endl;
+      t->add("test",a,b);
+      t->add("toast",a,b);
+      t->add("toasting",a,b);
+      t->add("slow",a,b);
+      t->add("slowly",a,b);
+      // t->add("BANANA",a,b);
+    cout << "arbol " << t->graphviz()<<endl;
+    // cout << t->printjson()<<endl;
 
     //cout << "encontro: "<< t->find("A")<<endl;
   //  cout << "encontro: "<< t->find("Z")<<endl;

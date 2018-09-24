@@ -123,6 +123,29 @@ function hijoIzquierdo(str, h, k){
   ctx.fillText(str, (h_center - str.length*4), k_center+4); // llenar texto en cir
 }
 
+// dibujar nodo
+
+function dibuja_Nodo(str, h, k){
+  
+  ctx.beginPath();
+  ctx.fillStyle = "#3498DB";
+  ctx.strokeStyle = "black";
+  ctx.font = "12px Georgia";
+  ctx.lineWidth = 10;
+
+  h_center = h;
+  k_center = k;
+  ctx.arc(h_center, k_center, 25, 0, 2 * Math.PI, false);
+  ctx.fill();
+
+  // escribir texto dentro del circulo
+  ctx.beginPath();
+  ctx.fillStyle = "black";
+  // var str = document.getElementById("txtInsert").value;  // para tamaño de letra <5
+
+  // str = "casa";
+  ctx.fillText(str, (h_center - str.length*2), k_center+2);
+}
 
 // ctx.beginPath();
 // ctx.arc(100, 75, 40, 0, 2* Math.PI);
@@ -171,7 +194,7 @@ function enviar(){
   console.log("input: "+str);
 
   var http = new XMLHttpRequest();
-  var url = 'http://localhost:8091/radix/getOptions?word='+str;
+  var url = 'http://localhost:8091/radix/getOptions?word='+str.toUpperCase();
   var params = 'orem=ipsum&name=binny';
   http.open('GET', url, true);
 
@@ -179,40 +202,27 @@ function enviar(){
 
   http.onreadystatechange = function() {
       if(http.readyState == 4 && http.status == 200) {
-          console.log(http.responseText);
-          alert(http.responseText);
+          // console.log("---->>"+http.responseText);
+          var arr = JSON.parse(http.responseText)["tree"];
+          // alert(http.responseText);
+           var h = 50; 
+           var k = 50;
+
+          for(var i = 0; i < arr.length; i++){
+            console.log(arr[i].valor);
+            dibuja_Nodo(arr[i].valor, h,k*(i+1));
+          }
 
       }
   }
   http.send(params);
 
 }
+
 /**
  * funcion POST para enviar data al servidor
  */
-function envio(){
-
-/*var http = new XMLHttpRequest();
-var url = 'http://localhost:8091/radix';
-var params = 'puntos=[a,b]&nomre=gato';
-
-http.open('POST', url, true);
-
-//Send the proper header information along with the request
-http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-http.onreadystatechange = function() {//Call a function when the state changes.
-    if(http.readyState == 4 && http.status == 200) {
-        alert(http.responseText);
-    }
-}
-http.send(params);
-*/
-
-/*
- var str = "{ value : value }";
- console.log(">> "+str);
-*/
+function envioPost(){
 
  var http = new XMLHttpRequest();
  var url = 'http://localhost:8091/radix/arrays';
