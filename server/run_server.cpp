@@ -3,12 +3,10 @@
 #include <typeinfo>
 #include <string>
 #include <utility>
-//Models for rtree
-// #include "models/Polygon.cpp"
 
 #include "../core/tree.h"
 #include "../radixset.hpp"
-// Added for the json-example
+
 #define BOOST_SPIRIT_THREADSAFE
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -27,10 +25,6 @@ using namespace boost::property_tree;
 
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 
-
-
-
-
 int main() {
     
 clasTest radix = clasTest();
@@ -38,17 +32,8 @@ clasTest radix = clasTest();
     
     
     Tree* t = new Tree();
-    // crear tree
+    // crear tree con direccion a, b
     int a, b;
-
-
-/*
-    t->add("ROMARIO",a,b);
-      t->add("RAMIRO",a,b);
-      t->add("CARCO",a,b);
-     cout << t->printjson() <<endl;
-
-*/
 
     HttpServer server;
     server.config.port = 8091;    
@@ -102,49 +87,7 @@ clasTest radix = clasTest();
             );
         }
     };*/
-/*
-    vector<int> v;
-    vector<Point> pv;
 
-    //Post | add polygons
-    server.resource["^/radix/arrays$"]["POST"] = [&radix,&v,&pv](
-            shared_ptr<HttpServer::Response> response,
-            shared_ptr<HttpServer::Request> request
-        ) {
-
-        stringstream stream;
-        string json_string = "";
-        SimpleWeb::CaseInsensitiveMultimap header;
-        try {
-            ptree pt;
-            read_json(request->content, pt);
-
-            for (boost::property_tree::ptree::value_type& rowPair:pt.get_child("points")) {
-                for (boost::property_tree::ptree::value_type& itemPair : rowPair.second) {
-                    int value = itemPair.second.get_value<int>();
-                    v.push_back(value);
-                }
-            }
-            for (size_t i = 0; i < v.size(); i += 2) {
-                Point point;
-                point.x = v[i];
-                point.y = v[i+1];
-                pv.push_back(point);
-            }
-
-            //tree->insert(new Polygon<dtype>(pv, identifier_polygon));
-            json_string = "{\"status\": verdad}";
-
-            stream << json_string;
-            response->write_get(stream,header);
-        } catch (const exception &e) {
-            response->write(
-                SimpleWeb::StatusCode::client_error_bad_request,
-                e.what()
-            );
-        }
-    };
-*/
 
     /* http://localhost:8090/radix/getOptions?word=test */
     server.resource["^/radix/getOptions$"]["GET"] = [t,&a,&b](
@@ -165,7 +108,7 @@ clasTest radix = clasTest();
 
 
              cout<<"word: ->"<< word <<endl;
-             // int c, d;   
+             
              
               t->add(word, a, b);
                
@@ -188,7 +131,7 @@ clasTest radix = clasTest();
 
 
     server.on_error = [](shared_ptr<HttpServer::Request> /*request*/, const SimpleWeb::error_code & /*ec*/) {
-        // Handle errors here
+        // manejo de errores
         // Note that connection timeouts will also call this handle with ec set to SimpleWeb::errc::operation_canceled
     };
 
