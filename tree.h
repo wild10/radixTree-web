@@ -1,16 +1,18 @@
 #ifndef TREE_H
 #define TREE_H
 
-#define MAX_SIZE_OPTIONS 10
-#define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
-
 #include <algorithm>
 #include <climits>
 #include "node.h"
 #include <random>
 #include <time.h>
 #include <string>
+
+#define MAX_SIZE_OPTIONS 10
+#define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
+
 //#include <stream>
 
 
@@ -41,9 +43,63 @@ public:
         printSons(root);
     }
 
+    /*void loadData(vector<vector<string>*>* dictionary, string location){
+        string line, dataBuffer;
+        ifstream file (location);
+        int max = 0;
+        if (file.is_open()){
+            while ( getline (file,line) ){
+                size_t len = line.length();
+                while(len >= dictionary->size())
+                    dictionary->push_back(new vector<string>);
+                (*dictionary)[len]->push_back(line);
+                if (len > max)
+                    max = len;
+            }
+            file.close();
+        }
+    }*/
+
+    size_t levenshtein_distance(string s1, string s2){
+        unsigned int s1len, s2len, x, y, lastdiag, olddiag;
+        s1len = s1.length();
+        s2len = s2.length();
+        unsigned int column[s1len+1];
+
+        for (y = 1; y <= s1len; y++)
+            column[y] = y;
+
+        for (x = 1; x <= s2len; x++) {
+            column[0] = x;
+            for (y = 1, lastdiag = x-1; y <= s1len; y++) {
+                olddiag = column[y];
+                column[y] = MIN3(column[y] + 1, column[y-1] + 1, lastdiag + (s1[y-1] == s2[x-1] ? 0 : 1));
+                lastdiag = olddiag;
+            }
+        }
+        return column[s1len];
+    }
+
+    string processMostNear(vector<vector<string>*> *dictionary, string find_word){
+        //cout << "-0" << endl;
 
 
+        //cout << "-1" << endl;
+        size_t distance, min = INT_MAX;
+        int minPos;
 
+        size_t len = find_word.length();
+
+        for(int i = 0; i < (*dictionary)[len]->size(); i++){
+            distance = levenshtein_distance(find_word, (*(*dictionary)[len])[i]);
+            if(min > distance){
+                min = distance;
+                minPos = i;
+                //cout << (*dictionary)[minPos] << " " << distance << endl;
+            }
+        }
+        return (*(*dictionary)[len])[minPos] ;
+    }
 
     void getWords(Node * & node, vector<string> *dictionary){
         if(dictionary->size() < MAX_SIZE_OPTIONS){
@@ -65,34 +121,58 @@ public:
         }
     }
 
-
+    void findOptions(string str, vector<string> * & dictionary){
+        std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+        size_t position = 0;
+        Node * node = root;
+        Node * next;
+        string prevStr = str;
+        size_t absPosition = 0;
+        while (node) {
+            node->contains(str, position);
+            absPosition += position;
+            str = str.substr(position);
+            next = node->sons[p(str[0])];
+            if (str.size() && next) {
+                node = next;
+            } else {
+                if(node){
+                    string initWord = prevStr.substr(0, absPosition-position);
+                    getWords(node, dictionary);
+                    for (int i = 0; i < dictionary->size(); i++) {
+                        (*dictionary)[i] = initWord + (*dictionary)[i];
+                    }
+                }
+                break;
+            }
+        }
+    }
 
     bool find(string str, Node * & node) {
-        node = root;//root asigna a la variable node del tipo Node
-        Node * next;//inicializa un puntero next del tipo Node
-        string prevStr = str;//palabra a buscar
-        size_t result,position = 0;
+        size_t position = 0;
+        node = root;
+        Node * next;
+        size_t result;
+        string prevStr = str;
+
         while (node) {
-          result = node->contains(str, position);
-          prevStr = str;
-          str = str.substr(position);
-          next = node->sons[p(str[0])];
-          if (str.size() && next) {
-              node = next;
-          } else {
-              break;
-          }
+            result = node->contains(str, position);
+            prevStr = str;
+            str = str.substr(position);
+            next = node->sons[p(str[0])];
+            if (str.size() && next) {
+                node = next;
+            } else {
+                break;
+            }
         }
+        // cout << "str size " << prevStr << endl;
+        // cout << "node isw " << node->str << endl;
         if ((prevStr == node->str) && node->isWord) {
             return true;
         }
         return false;
     }
-
-  bool find(string word){
-    Node * node;
-    return find(word,node);
-  }
 
     size_t find(
             string & str,
@@ -176,7 +256,6 @@ public:
     }
 
     string graphviz(){
-        //Node * node;
         string str = "digraph G {\n";
         string tree = "";
         graphviz(root, tree);
@@ -186,30 +265,24 @@ public:
 
     void printjson(Node * & node, string & tree) {
         if ( ! node) {
-            return ;
+            return;
         }
         string name;
         char ss[100];
         sprintf(ss, "\"%p\"", node);
         name = ss;
-        string parentStr;
         if (node->parent) {
-            parentStr = "\"\"";
-            //if (node->parent->str != "") {
+            string parentStr = "\"\"";
+            if (node->parent->str != "") {
                 char sp[100];
                 sprintf(sp, "\"%p\"", node->parent);
                 parentStr = sp;
-            //}
+            }
         }
         if (node->isWord) {
-
-            // cout<<" --> "<<parentStr<<endl;
-            if(parentStr == "") parentStr = "\"\"";
-            tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name + ",\"padre\":"+parentStr+"},";
-        }else{
-             // cout<<" --> "<<parentStr<<endl;
-            if(parentStr == "") parentStr = "\"\"";
-            tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name + ",\"padre\":"+parentStr+"},";
+            tree +="{"+ name + ":\"" +node->str + "\"},";
+        } else if(node->str != "") {
+            tree += name + ":\""  + node->str + "\"},";
         }
 
         for (size_t i = 0; i < ALPHABET_LENGTH; i += 1) {
@@ -260,7 +333,6 @@ public:
         //cout<<"word "<<&word<<endl;
         if ( ! root) {
             root = new Node(word, str, true, start);
-            //cout << "root: " << str << endl;
             return;
         }
         Node * node;
