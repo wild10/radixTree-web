@@ -5,7 +5,7 @@
 #include <utility>
 
 #include "../core/tree.h"
-#include "../radixset.hpp"
+// #include "../radixset.hpp"
 
 #define BOOST_SPIRIT_THREADSAFE
 #include <boost/property_tree/json_parser.hpp>
@@ -27,7 +27,7 @@ using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 
 int main() {
     
-clasTest radix = clasTest();
+// clasTest radix = clasTest();
 
     
     
@@ -38,6 +38,7 @@ clasTest radix = clasTest();
     HttpServer server;
     server.config.port = 8091;    
 
+/*
     //Get | radix
     server.resource["^/radix$"]["GET"] = [&radix](shared_ptr<HttpServer::Response> response, shared_ptr<HttpServer::Request> request) {
         stringstream stream;
@@ -46,7 +47,7 @@ clasTest radix = clasTest();
         response->write_get(stream,header);
 
     };
-
+*/
 
  /*   //Post | add polygons
     server.resource["^/radix$"]["POST"] = [&radix](

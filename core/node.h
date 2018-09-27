@@ -90,9 +90,6 @@ public:
     size_t contains(string & otherStr, size_t & i) {
         size_t size = str.size();
         size_t otherSize = otherStr.size();
-        cout << "other str constains: " << otherStr<< endl;
-        cout << "str contains: " <<str<< '\n';
-        cout << "position contains: " <<i<< '\n';
         for (i = 0; i < size; i += 1) {
             if (str[i] != otherStr[i]) {
                 if (i >= otherSize) {
@@ -104,11 +101,12 @@ public:
                 }
             }
         }
-        if (size == otherSize) {
+        if (size == otherSize) { //¿CFX =APE?
             return FOUND;
         }
         return SPLIT_1;
     }
+
     friend class Tree;
 };
 
