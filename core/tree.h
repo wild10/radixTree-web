@@ -68,7 +68,7 @@ public:
 
 
     bool find(string str, Node * & node) {
-        node = root; 
+        node = root;
         Node * next;
         string prevStr = str; //palabra a buscar
         size_t result,position = 0;
@@ -84,11 +84,10 @@ public:
               break;
           }
         }
-        if ((prevStr == node->str) && node->isWord) {
-        // cout<<"isword: "<<prevStr <<" ="<<node->str<<" : "<< node->isWord<<"- "<<endl;
-        // if(prevStr == node->str){
+
+        if ((prevStr == node->str && node->isWord )) {
             return true;
-        
+
         }
         return false;
     }
@@ -229,7 +228,7 @@ public:
       size_t tam=temp.length();
       temp.pop_back();
       str += temp + "]}";
-      
+
       return str;
     }
 
