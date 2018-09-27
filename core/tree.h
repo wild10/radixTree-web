@@ -65,6 +65,263 @@ public:
         }
     }
 
+bool haveson(){
+    bool haveson=false;
+    for(int i;i<ALPHABET_LENGTH ;i++){
+      if(root->sons[i]!=0){
+        haveson =true;
+        break;
+      }
+    }
+    return haveson;
+  }
+
+bool isleaf(Node * node){
+    bool isleaf=true;
+    for(int i=0;i<ALPHABET_LENGTH ;i++){
+      if(node->sons[i]!=0){
+        isleaf =false;
+        break;
+      }
+    }
+    return isleaf;
+  }
+
+string join(Node * node,Node * next){
+    string a=node->str;
+    string b=next->str;
+    cout << "node" <<node->str<<'\n';
+    cout << "next" <<next->str<<'\n';
+      cout << "next" <<a+b<<'\n';
+    return a+b;
+  }
+
+   bool iscontain(string & word,Node * node){
+    string local= node->str;
+    size_t sizeword =word.size();
+    size_t sizelocal =local.size();
+    size_t len=sizeword-sizelocal;
+    for(int i=0;i<len;i++){
+      local="-"+local;
+    }
+    string reverlocal=string(local.rbegin(),local.rend());
+    string reverword=string(word.rbegin(),word.rend());
+    //cout <<reverlocal << '\n';
+    //cout <<local << '\n';
+    //cout <<word << '\n';
+
+    for(int i=0;i<sizeword ;i++){
+      //cout << reverlocal[i]<<"-"<<reverword[i] << '\n';
+      if(reverlocal[i]==reverword[i]){
+          if(i<=sizeword){
+            //cout << "entro true" <<i<< '\n';
+            return true;
+          }else
+            //cout << "entro false" <<i<< '\n';
+            return false;
+      }else{
+        return false;
+      }
+    }
+    return false;
+  }
+
+int nsons(Node * & node){
+    int cont=0;
+    for(int i=0;i<ALPHABET_LENGTH ;i++){
+      if(node->sons[i]!=0){
+        cont++;
+        cout << cont << '\n';
+      }
+    }
+    return cont;
+  }
+
+ int nsonparents(Node * & node){
+    int cont=0;
+    Node * parent = node->parent;
+    cout << node << '\n';
+    cout << node->str << '\n';
+    if(node->parent!=0){
+    for(int i=0;i<ALPHABET_LENGTH ;i++){
+      if(parent->sons[i]!=0){
+        cont++;
+        cout << cont << '\n';
+      }
+    }
+  }
+    return cont;
+  }
+
+void eraser(string str, Node *  node) {
+      if(str==root->str && root->isWord && !haveson()){
+        root=NULL;
+        return;
+      }
+      node = root;//root asigna a la variable node del tipo Node
+      Node * next;//inicializa un puntero next del tipo Node
+      Node * temporal;
+      string prevStr = str;//palabra a buscar
+      size_t result,position = 0;
+      while (node) {
+        cout<<"____________________________"<<endl;
+        result = node->contains(str, position);
+        cout<<"position: "<<position<<endl;
+        prevStr = str;
+        str = str.substr(position);
+        cout<<"str: "<<str<<endl;
+        cout<<"prevstr: "<<prevStr<<endl;
+        cout<<"str  node: "<<node->str<<endl;
+        next = node->sons[p(str[0])];
+        cout << "p" << p(str[0])<< endl;
+        cout << "node find: " << node<< endl;
+        cout << "next find: " << next<< endl;
+        if (str.size() && next) {
+            node = next;
+        } else {
+            break;
+        }
+      }
+
+      cout << "_________________"<< endl;
+      for(int i=0;i<ALPHABET_LENGTH ;i++){
+        if(node->sons[i]!=0){
+          cout << "node son: " << node->sons[i]<< endl;
+          temporal=node->sons[i];
+        }
+      }
+
+      //cout << "son punt: " << son<< endl;
+
+      /*cout <<"temporal "<< temporal->str<< '\n';
+      for(int i=0;i<ALPHABET_LENGTH ;i++){
+        if(node->parent->sons[i]!=0){
+          cout << "node parent son: " << node->parent->sons[i]<< endl;
+        //  temporal=node->sons[i];
+        }
+      }*/
+      cout << "________bug_________"<< endl;
+      cout <<"node parent "<< node->parent<< '\n';
+      cout << "Es hoja " <<isleaf(node)<< endl;
+      cout << "Es hijos "<<nsons(node)<< endl;
+      //cout <<temporal->str << '\n';
+
+      cout<<node->str<<endl;
+      if ((prevStr == node->str && node->isWord )) {
+        if(isleaf(node)){
+          delete node;
+          node->isWord=false;
+          node->parent->sons[p(node->str[0])]=0;
+        }else if(nsons(node)>1){
+          node->isWord=false;
+        }else{
+          string index=temporal->str;
+          int indice=p(index[0]);
+          string indexactual=node->str;
+          int indiceactual=p(indexactual[0]);
+          node->sons[indice]=0;
+          temporal->parent=node->parent;
+          node->parent->sons[indiceactual]=temporal;
+          temporal->str=join(node,temporal);
+
+        }
+      }
+      //Caso cuando solo tiene un hijo y debe ser raiz una palabra
+      Node * temporal2;
+      if(nsons(root)==1){
+        for(int i=0;i<ALPHABET_LENGTH ;i++){
+          if(root->sons[i]!=0){
+            cout << "root son: " << root->sons[i]<< endl;
+            temporal2=root->sons[i];
+          }
+        }
+        temporal2->parent=0;
+        //return;
+      }
+
+      cout << "root " <<nsons(root)<< '\n';
+  }
+
+
+  void erase(string word,Node * node){
+   size_t a,start;
+   size_t result;
+
+    cout << "=====erase========"<< endl;
+      if(find(word)){
+          if(word==root->str && root->isWord && !haveson()){
+            root=NULL;
+            }
+            else{
+              if(!node) return;
+              //cout << " prove " <<'\n';
+              //cout << node<<'\n';
+              //cout <<node->str << '\n';
+
+              if(node->str==word){
+                delete node;
+                node->parent->sons[p(node->str[0])]=0;
+              }
+
+              //cout << " lo contiene: " <<iscontain(word,node) <<'\n';
+              //cout << nsonparents(node) << '\n';
+              //cout << nsonparents(node) << '\n';
+              if(iscontain(word,node) && isleaf(node)){
+                //if(nsonparents(node)==2){
+                  //string join1=node->str;
+                  //string join2=node->parent->str;
+                  //string join=join2+join1;
+                  //cout << join << '\n';
+                  //  node->parent->str=string(join);
+                //}
+                delete node;
+                node->parent->sons[p(node->str[0])]=0;
+              }
+              cout << "node parent " <<node->parent <<'\n';
+              cout << "node is word " <<node->isWord <<'\n';
+              cout << "node is *" <<node<<'\n';
+              cout << "node is str " <<node->str<<'\n';
+              for (size_t i = 0; i < ALPHABET_LENGTH; i += 1) {
+                  if(node->sons[i]!=0) {
+                    cout << "son " <<node->sons[i]<<"i: "<<i<<'\n';
+                  }
+              }
+              cout << "Es hoja. " <<isleaf(node)<<'\n';
+
+              //cout << "padre parent " <<node->parent->parent <<'\n';
+              //cout << "padre is word " <<node->parent->isWord <<'\n';
+              cout << "padre is *" <<node->parent<<'\n';
+              //cout << "padre is str " <<node->parent->str<<'\n';
+              for (size_t i = 0; i < ALPHABET_LENGTH; i += 1) {
+                  if(node->parent->sons[i]!=0) {
+                    cout << "padre son " <<node->parent->sons[i]<<"i: "<<i<<'\n';
+                  }
+              }
+              cout << "Es hoja. " <<isleaf(node)<<'\n';
+              //cout << position << '\n';
+              //cout << "hijos " <<node->sons[p(node->str[0])]<<'\n';
+
+              /*if(nsonparents(node)==2 && isleaf(node) && iscontain(word,node)){
+              }*/
+
+              //cout << word[0]<<"ok" <<'\n';
+              //cout << p(word[0])<<"ok" <<'\n';
+              for (size_t i = 0; i < ALPHABET_LENGTH; i += 1) {
+                if(node->sons[i] !=0){
+                  //cout << node->sons[i]<<"ok son " << '\n';
+                  erase(word,node->sons[i]);
+                }
+              }
+            }
+      }else{
+        cout << "No existe elemento" << '\n';
+      }
+    }
+
+    void erase(string word){
+      string temp="a";int position=0;
+      eraser(word,root);
+    }
 
 
     bool find(string str, Node * & node) {
@@ -199,16 +456,20 @@ public:
 
         if (node->parent) {
             parentStr = "\"\"";
-            //if (node->parent->str != "") {
+            // if (node->parent->str != "") {
                 char sp[100];
                 sprintf(sp, "\"%p\"", node->parent);
                 parentStr = sp;
-            //}
+            // }
         }
         if (node->isWord) {
+
+            if(parentStr == "") parentStr = "\"\""; // << cambio validacion
             tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name +
             ",\"padre\":"+parentStr+",\"isword\":\"1\"},";
         }else{
+
+          if(parentStr == "") parentStr = "\"\""; // << un solo padre root
           tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name +
           ",\"padre\":"+parentStr+",\"isword\":\"0\"},";
 

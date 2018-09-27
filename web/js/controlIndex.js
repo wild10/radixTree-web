@@ -102,10 +102,10 @@ function hijoIzquierdo(str, h, k){
 }
 
 
- //dibujar un nodo enlazado con su hijo 
+ //dibujar un nodo enlazado con su hijo
 
  function dibuja_flecha(from, to){
-    
+
     var radianes = Math.PI/100;
     var headlen = 10;
     console.log(from.x+" , "+to.y);
@@ -121,7 +121,7 @@ function hijoIzquierdo(str, h, k){
 
     ctx.beginPath();
     ctx.lineWidth=2;
-          
+
     if (from.x < to.x) {
        from.x += run;
        to.x -= run;
@@ -151,7 +151,7 @@ function hijoIzquierdo(str, h, k){
 // dibujar nodo
 
 function dibuja_Nodo(str, h, k){
-  
+
   ctx.beginPath();
   ctx.fillStyle = "#3498DB";
   ctx.strokeStyle = "black";
@@ -173,6 +173,8 @@ function dibuja_Nodo(str, h, k){
 }
 */
 /* ============== FUNCIONES PARA DIBUJAR CON D3  =============================== */
+
+var dato, animDuration=500;
 
 var data = [
     { "valor" : "Level 2: A","id" : "Level 2: A", "padre":"Top Level" },
@@ -220,16 +222,16 @@ data.forEach(function(node) {
 var margin = {top: 20, right: 120, bottom: 20, left: 120},
  width = 960 - margin.right - margin.left,
  height = 500 - margin.top - margin.bottom;
- 
-var i = 0;
+
+var i = 0,root;
 
 var tree = d3.layout.tree()
  .size([height, width]);
 
 var diagonal = d3.svg.diagonal() // buscar remplazar con una linea
- .projection(function(d) { return [d.x, d.y]; }); // cambio 
+ .projection(function(d) { return [d.x, d.y]; }); // cambio
 
- // var svg = d3.select("body").remove(); 
+ // var svg = d3.select("body").remove();
  var svg = d3.select("body").append("svg")
  .attr("width", width + margin.right + margin.left)
  .attr("height", height + margin.top + margin.bottom)
@@ -243,10 +245,11 @@ function test(tree){
 // console.log("<<"+test[0]);
 
 root = treeData[0];
+dato = treeData[0];;
 // console.log(JSON.stringify(root));
 
 update(root);
-  
+
 function update(source) {
 
   // Calcular el nuevo arbol.
@@ -263,20 +266,23 @@ function update(source) {
   // Agregar los nodos.
   var nodeEnter = node.enter().append("g")
    .attr("class", "node")
-   .attr("transform", function(d) { 
+   .attr("transform", function(d) {
     //
     // return "translate(" + d.y + "," + d.x + ")"; });
-    return "translate(" + d.x + "," + d.y + ")"; }); // cambio vertical 
+    return "translate(" + d.x + "," + d.y + ")"; }) // cambio vertical
+   .attr("id",function(d){return "node-"+d.id});
 
    // Agregar circulos
   nodeEnter.append("circle")
    .attr("r", 10)
-   .style("fill", "#fff");
+   .style("fill", function(d) { return d.isword ==="1" ? "#abebc6" : "#fff"; });
+   // .style("fill", "#fff");
+
    // .style("fill", function(d) { return d._children ? "#48c9b0" : "#fff"; });
 
    // agreagar texto a los circulos
   nodeEnter.append("text")
-   .attr("y", function(d) { 
+   .attr("y", function(d) {
     // return -2})
     return d.children || d._children ? -18 : 18; })
    .attr("dy", ".35em")
@@ -286,10 +292,10 @@ function update(source) {
 
 /*
   nodeEnter.append("text")
-   .attr("x", function(d) { 
+   .attr("x", function(d) {
     return d.children || d._children ? -13 : 13; })
    .attr("dy", ".35em")
-   .attr("text-anchor", function(d) { 
+   .attr("text-anchor", function(d) {
     return d.children || d._children ? "end" : "start"; })
    .text(function(d) { return d.valor; })
    .style("fill-opacity", 1);
@@ -308,6 +314,59 @@ function update(source) {
 
 }
 
+}
+
+/*----------------------------------------------------------------------------------*/
+
+function visitElement(element,animX){
+ // d3.select("#node-"+element.id).classed("visited",true);
+ console.log("->"+element.valor);
+  d3.select("#node-"+element.id)
+    .transition().duration(animDuration).delay(animDuration*animX)
+    .style("fill","#FF5733").style("stroke","#FF5733");
+}
+
+function dft(){
+  var stack=[];
+  var animX=0;
+  var root = dato;
+  stack.push(root);
+
+  // console.log(stack.length!==0);
+  while(stack.length!==0){
+    var element = stack.pop();
+     visitElement(element,animX);
+      animX=animX+1;
+    if(element.children!==undefined){
+      for(var i=0; i<element.children.length; i++){
+        stack.push(element.children[element.children.length-i-1]);
+        console.log("element: "+element.children[element.children.length-i-1].valor);
+      }
+    }
+
+  }
+}
+
+function bft(){
+  var queue=[];
+  var animX=0;
+  queue.push(root);
+
+  while(queue.length!==0){
+
+    var element = queue.shift();
+
+    visitElement(element,animX);
+
+    animX= animX+1;
+
+    if(element.children!==undefined){
+      for(var i=0; i<element.children.length; i++){
+        queue.push(element.children[i]);
+        console.log(element.children[i].valor);
+      }
+    }
+  }
 }
 
 
@@ -360,13 +419,13 @@ function enviar(){
   if (document.getElementById("txtInsert").value== "") {
         alert("Enter a text");
         document.getElementById("txtInsert").focus();
-        
+
     }
-    else{    
+    else{
     if (!/^[a-zA-Z]*$/g.test(document.getElementById("txtInsert").value)) {
         alert("Invalid characters");
         document.getElementById("txtInsert").focus();
-        
+
     }
     else{
 
@@ -374,8 +433,9 @@ function enviar(){
   //obtener el texto
   var str = document.getElementById("txtInsert").value;
     str = str.split(' ').join('');
-  console.log("input: "+str);
-  
+
+  // console.log("input: "+str);
+
   document.getElementById('txtInsert').value = ''
 
   var http = new XMLHttpRequest();
@@ -388,13 +448,15 @@ function enviar(){
   http.onreadystatechange = function() {
       if(http.readyState == 4 && http.status == 200) {
           // respuesta del servidor en array
+          // console.log(http.responseText);
+          // alert(http.responseText);
           var arr = JSON.parse(http.responseText)["tree"];
           // alert(http.responseText);
 
           /*
            var padre = {x:ancho/2, y:50};
            var hijo = {x:ancho/2,y:50};
-           var h = ancho / 2; 
+           var h = ancho / 2;
            var k = 50;
            var coord_Node = [];
            for(var i = 0; i < arr.length; i++){
@@ -404,25 +466,30 @@ function enviar(){
           */
            //
            // var id = ""
-           console.log("stringify arr->"+JSON.stringify(arr));
+
+
+           // console.log("stringify arr->"+JSON.stringify(arr));
             d3.selectAll("svg").remove(); // eliminar el anterior y reemplazar
            dibujarTree(arr);
+
+
+
            // var svg = d3.select("body").remove();
 
            /*// console.log(arr[i].id);
             if(arr.length === 1) dibuja_Nodo(arr[0].valor, padre.x,padre.y);
             else{
 
-              dibuja_Nodo(arr[0].valor, h, k);  
+              dibuja_Nodo(arr[0].valor, h, k);
               coord_Node.push({x:h, y:k, num:1, nivel:0});
 
 
               for(var i = 1; i < arr.length; i++){
-                
+
                 // id = arr[i].id;
                 for(var j = 0; j < i; j++){
-                  
-                  // console.log(arr[i].valor+" --> id: "+arr[i].id+" padre:"+arr[i].padre);  
+
+                  // console.log(arr[i].valor+" --> id: "+arr[i].id+" padre:"+arr[i].padre);
 
                   if(arr[i].padre === arr[j].id ){
 
@@ -430,17 +497,17 @@ function enviar(){
                     var node_h = coord_Node[j].x - (50*coord_Node[j].num);
                     var node_k = coord_Node[j].y - (50*coord_Node[j].nivel);
 
-                    coord_Node[i] = {x:node_h, y:node_k, num:1, nivel:0}; 
+                    coord_Node[i] = {x:node_h, y:node_k, num:1, nivel:0};
 
                     dibuja_Nodo(arr[i].valor,node_h,node_k);
                     dibuja_flecha(coord_Node[j],coord_Node[i]);
 
                     coord_Node[i].num =  coord_Node[i].num + 1;
                     // falta numero de hijos y numero de niveles
-                  }                  
-                }                
+                  }
+                }
               }
-            }         */ 
+            }         */
 
       }
   }
@@ -469,7 +536,7 @@ function buscar(){
 
     http.onreadystatechange = function() {
         if(http.readyState == 4 && http.status == 200) {
-            
+
 
             if(http.responseText ==="1"){
 
@@ -477,10 +544,10 @@ function buscar(){
 
             }else{
 
-              document.getElementById('label1').innerHTML = 'WORD: \"'+str.toUpperCase()+ '\" NOT FOUND';              
+              document.getElementById('label1').innerHTML = 'WORD: \"'+str.toUpperCase()+ '\" NOT FOUND';
 
             }
-            
+
 
         }
     }
@@ -488,3 +555,34 @@ function buscar(){
 
 }
 
+/** --------------- BUSCAR UNA PALABRA DENTRO DEL ARBOL ----------------**/
+
+function eliminar(){
+
+
+  //obtener el texto
+    var str = document.getElementById("txtDelete").value;
+
+    // console.log("input Delete: "+str);
+
+    var http = new XMLHttpRequest();
+    var url = 'http://localhost:8091/radix/delete?word='+ str.toUpperCase();
+    var params = 'orem=ipsum&name=binny';
+    http.open('GET', url, true);
+
+    http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+    http.onreadystatechange = function() {
+        if(http.readyState == 4 && http.status == 200) {
+
+          // get response in an array
+           var arr = JSON.parse(http.responseText)["tree"];
+           // draw the graph
+           d3.selectAll("svg").remove(); // eliminar el anterior y reemplazar
+           dibujarTree(arr);
+
+        }
+    }
+    http.send(params);
+
+}

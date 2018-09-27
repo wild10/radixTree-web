@@ -26,17 +26,17 @@ using namespace boost::property_tree;
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 
 int main() {
-    
+
 // clasTest radix = clasTest();
 
-    
-    
+
+
     Tree* t = new Tree();
     // crear tree con direccion a, b
     int a, b;
 
     HttpServer server;
-    server.config.port = 8091;    
+    server.config.port = 8091;
 
 /*
     //Get | radix
@@ -63,7 +63,7 @@ int main() {
             read_json(request->content, pt);
             string newcadena = pt.get<string>("cadena");
             radix.text = newcadena;
-            
+
             for (boost::property_tree::ptree::value_type& rowPair:pt.get_child("polygon")) {
                 for (boost::property_tree::ptree::value_type& itemPair : rowPair.second) {
                     int value = itemPair.second.get_value<int>();
@@ -90,7 +90,7 @@ int main() {
     };*/
 
 
-    /* http://localhost:8090/radix/getTree?word=test */
+    /* http://localhost:8091/radix/getTree?word=test */
     server.resource["^/radix/getTree$"]["GET"] = [t,&a,&b](
         shared_ptr<HttpServer::Response> response,
         shared_ptr<HttpServer::Request> request
@@ -109,6 +109,8 @@ int main() {
             //llamado a la funcion del tree
             t->add(word, a, b);
             // convertir a stream text para envio
+            cout<<t->printjson()<<endl;
+            
             stream << t->printjson();
             //envio de la respuesta
             response->write_get(stream, header);
@@ -122,7 +124,7 @@ int main() {
         }
     };
 
-    /* http://localhost:8090/radix/find?word=test */
+    /* http://localhost:8091/radix/find?word=test */
     server.resource["^/radix/find$"]["GET"] = [t,&a,&b](
         shared_ptr<HttpServer::Response> response,
         shared_ptr<HttpServer::Request> request
@@ -137,7 +139,7 @@ int main() {
             for(auto &field : query_fields)
                 word = field.second;
 
-            
+
              cout<<"FIND INPUT: "<< word <<endl;
 
             // stream << radix.test(word);
@@ -153,6 +155,42 @@ int main() {
             );
         }
     };
+
+
+    /* http://localhost:8091/radix/delete?word=test */
+    server.resource["^/radix/delete$"]["GET"] = [t,&a,&b](
+        shared_ptr<HttpServer::Response> response,
+        shared_ptr<HttpServer::Request> request
+        ) {
+
+        stringstream stream;
+        SimpleWeb::CaseInsensitiveMultimap header;
+
+        try {
+            string word;
+            auto query_fields = request->parse_query_string();
+            for(auto &field : query_fields)
+                word = field.second;
+
+
+             cout<<"DELETE INPUT: "<< word <<endl;
+
+            // eliminar la palabra
+            t->erase(word); 
+
+            stream <<t->printjson();
+
+            response->write_get(stream, header);
+
+
+        } catch (const exception &e) {
+            response->write(
+                SimpleWeb::StatusCode::client_error_bad_request,
+                e.what()
+            );
+        }
+    };
+
 
 
     server.on_error = [](shared_ptr<HttpServer::Request> /*request*/, const SimpleWeb::error_code & /*ec*/) {
