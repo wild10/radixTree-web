@@ -89,8 +89,40 @@ clasTest radix = clasTest();
     };*/
 
 
-    /* http://localhost:8090/radix/getOptions?word=test */
-    server.resource["^/radix/getOptions$"]["GET"] = [t,&a,&b](
+    /* http://localhost:8090/radix/getTree?word=test */
+    server.resource["^/radix/getTree$"]["GET"] = [t,&a,&b](
+        shared_ptr<HttpServer::Response> response,
+        shared_ptr<HttpServer::Request> request
+        ) {
+
+        stringstream stream;
+        SimpleWeb::CaseInsensitiveMultimap header;
+
+        // capturar dato string para consulta
+        try {
+            string word;
+            auto query_fields = request->parse_query_string();
+            for(auto &field : query_fields)
+                word = field.second;
+
+            //llamado a la funcion del tree
+            t->add(word, a, b);
+            // convertir a stream text para envio
+            stream << t->printjson();
+            //envio de la respuesta
+            response->write_get(stream, header);
+
+
+        } catch (const exception &e) {
+            response->write(
+                SimpleWeb::StatusCode::client_error_bad_request,
+                e.what()
+            );
+        }
+    };
+
+    /* http://localhost:8090/radix/find?word=test */
+    server.resource["^/radix/find$"]["GET"] = [t,&a,&b](
         shared_ptr<HttpServer::Response> response,
         shared_ptr<HttpServer::Request> request
         ) {
@@ -104,20 +136,12 @@ clasTest radix = clasTest();
             for(auto &field : query_fields)
                 word = field.second;
 
-            // radix.prueba(word);
-
-
-             cout<<"word: ->"<< word <<endl;
-             
-             
-              t->add(word, a, b);
-               
-             cout<< t->printjson() <<endl;
+            
+             cout<<"FIND INPUT: "<< word <<endl;
 
             // stream << radix.test(word);
-            stream << t->printjson();
+            stream << t->find(word);
 
-            // cout<<"jason ->" << strjason(word) <<endl;
             response->write_get(stream, header);
 
 
@@ -132,7 +156,7 @@ clasTest radix = clasTest();
 
     server.on_error = [](shared_ptr<HttpServer::Request> /*request*/, const SimpleWeb::error_code & /*ec*/) {
         // manejo de errores
-        // Note that connection timeouts will also call this handle with ec set to SimpleWeb::errc::operation_canceled
+        // Notar que la connexion  hace timeouts  tambien llama  y maneja la modificacion del  SimpleWeb::errc::operation_canceled
     };
 
     cout << "WEB SERVER IS RUNNNING" << endl;
@@ -141,7 +165,7 @@ clasTest radix = clasTest();
         server.start();
     });
 
-    // Wait for server to start so that the client can connect
+    // Esperar al servicio para iniciar asi el cliente se conecta
     this_thread::sleep_for(chrono::seconds(1));
     server_thread.join();
 }

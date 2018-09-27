@@ -9,17 +9,25 @@
 </head>
 
 <body>
-<div>
-  <h1> Radix Tree </h1>
-</div>
+
   <div>
-    <input Id="txtInsert" type="text" name="" value="" placeholder="  inserte texto">
-    <input type="button" onclick="insertData()" class="" value="insert"/>
-    <input type="text" name="" value="" placeholder="  escriba texto">
-    <input type="button" onclick="handleClick()" class="" value="delete"/>
-    <input type="button" onclick="enviar()" class="" value="enviar"/>
+    <h1> Radix Tree </h1>
   </div>
-</br>
+  <div>
+    <input Id="txtInsert" type="text" name="" value="" placeholder="  inserte texto" maxlength="10" >
+    <input type="button" onclick="enviar()" class="" value="Insert"/>
+    <input type="button" onclick="buscar()" class="" value="Find"/>
+
+    <input type="text" name="" value="" placeholder="   texto a eleminar">
+    <input type="button" onclick="handleClick()" class="" value="delete"/>
+  </div>
+  
+  </br>
+  <div>
+    <label id="label1"></label>
+  </div>
+
+</br></br>
 <!--
  <canvas id="miCanvas" width="1000" height="600" class="canvas_style"> tu navegador no soporta canvas hmtl5</canvas> 
 -->

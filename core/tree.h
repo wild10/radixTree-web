@@ -68,12 +68,12 @@ public:
 
 
     bool find(string str, Node * & node) {
-        node = root;//root asigna a la variable node del tipo Node
-        Node * next;//inicializa un puntero next del tipo Node
+        node = root; 
+        Node * next;
         string prevStr = str;//palabra a buscar
         size_t result,position = 0;
         while (node) {
-          result = node->contains(str, position);
+          result = node->contains(str, position); // position of p
           prevStr = str;
           str = str.substr(position);
           next = node->sons[p(str[0])];
@@ -84,7 +84,10 @@ public:
           }
         }
         if ((prevStr == node->str) && node->isWord) {
+        // cout<<"isword: "<<prevStr <<" ="<<node->str<<" : "<< node->isWord<<"- "<<endl;
+        // if(prevStr == node->str){
             return true;
+        
         }
         return false;
     }

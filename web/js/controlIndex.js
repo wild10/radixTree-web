@@ -249,18 +249,18 @@ update(root);
   
 function update(source) {
 
-  // calcular el nuevo arbol.
+  // Calcular el nuevo arbol.
   var nodes = tree.nodes(root).reverse(),
    links = tree.links(nodes);
 
   // Normaliza para el camino fijado
   nodes.forEach(function(d) { d.y = d.depth * 100; });// cambio de 180 a 100
 
-  // Declare the nodesâ€¦
+  // Declarar el nodo¦
   var node = svg.selectAll("g.node")
    .data(nodes, function(d) { return d.id || (d.id = ++i); });
 
-  // Enter the nodes.
+  // Agregar los nodos.
   var nodeEnter = node.enter().append("g")
    .attr("class", "node")
    .attr("transform", function(d) { 
@@ -268,10 +268,23 @@ function update(source) {
     // return "translate(" + d.y + "," + d.x + ")"; });
     return "translate(" + d.x + "," + d.y + ")"; }); // cambio vertical 
 
+   // Agregar circulos
   nodeEnter.append("circle")
    .attr("r", 10)
    .style("fill", "#fff");
+   // .style("fill", function(d) { return d._children ? "#48c9b0" : "#fff"; });
 
+   // agreagar texto a los circulos
+  nodeEnter.append("text")
+   .attr("y", function(d) { 
+    // return -2})
+    return d.children || d._children ? -18 : 18; })
+   .attr("dy", ".35em")
+   .attr("text-anchor", "middle")
+   .text(function(d) { return d.valor; })
+   .style("fill-opacity", 1);
+
+/*
   nodeEnter.append("text")
    .attr("x", function(d) { 
     return d.children || d._children ? -13 : 13; })
@@ -280,15 +293,18 @@ function update(source) {
     return d.children || d._children ? "end" : "start"; })
    .text(function(d) { return d.valor; })
    .style("fill-opacity", 1);
-
-  // Declare the linksâ€¦
+*/
+  // Declarar el enlace de camino¦
   var link = svg.selectAll("path.link")
    .data(links, function(d) { return d.target.id; });
 
-  // Enter the links.
+  // agregar el enlace
   link.enter().insert("path", "g")
    .attr("class", "link")
    .attr("d", diagonal);
+   // .attr("d",function(d){
+   //    return d.source.id +"->"+ d.target.id;
+   //  })
 
 }
 
@@ -325,15 +341,45 @@ function handleClick(event){
 }
 
 /**------------- ENVIAR GET STRING ----------------- */
+function validar() {
+    if (document.getElementById("txtInsert").value== "") {
+        alert("Enter a text");
+        document.getElementById("txtInsert").focus();
+        return false;
+    }
+    if (!/^[a-zA-Z]*$/g.test(document.getElementById("txtInsert").value)) {
+        alert("Invalid characters");
+        document.getElementById("txtInsert").focus();
+        return false;
+    }
+}
+/**------------- ENVIAR GET STRING ----------------- */
 function enviar(){
+
+
+  if (document.getElementById("txtInsert").value== "") {
+        alert("Enter a text");
+        document.getElementById("txtInsert").focus();
+        
+    }
+    else{    
+    if (!/^[a-zA-Z]*$/g.test(document.getElementById("txtInsert").value)) {
+        alert("Invalid characters");
+        document.getElementById("txtInsert").focus();
+        
+    }
+    else{
+
 
   //obtener el texto
   var str = document.getElementById("txtInsert").value;
-
+    str = str.split(' ').join('');
   console.log("input: "+str);
+  
+  document.getElementById('txtInsert').value = ''
 
   var http = new XMLHttpRequest();
-  var url = 'http://localhost:8091/radix/getOptions?word='+str.toUpperCase();
+  var url = 'http://localhost:8091/radix/getTree?word='+str.toUpperCase();
   var params = 'orem=ipsum&name=binny';
   http.open('GET', url, true);
 
@@ -399,6 +445,46 @@ function enviar(){
       }
   }
   http.send(params);
+
+}
+}
+
+}
+
+/** --------------- BUSCAR UNA PALABRA DENTRO DEL ARBOL ----------------**/
+
+function buscar(){
+
+  //obtener el texto
+    var str = document.getElementById("txtInsert").value;
+
+    // console.log("input: "+str);
+
+    var http = new XMLHttpRequest();
+    var url = 'http://localhost:8091/radix/find?word='+ str.toUpperCase();
+    var params = 'orem=ipsum&name=binny';
+    http.open('GET', url, true);
+
+    http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+    http.onreadystatechange = function() {
+        if(http.readyState == 4 && http.status == 200) {
+            
+
+            if(http.responseText ==="1"){
+
+              document.getElementById('label1').innerHTML = 'WORD: \"'+str.toUpperCase() +'\" FOUND';
+
+            }else{
+
+              document.getElementById('label1').innerHTML = 'WORD: \"'+str.toUpperCase()+ '\" NOT FOUND';              
+
+            }
+            
+
+        }
+    }
+    http.send(params);
 
 }
 
