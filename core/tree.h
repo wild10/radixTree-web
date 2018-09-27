@@ -206,14 +206,12 @@ public:
             //}
         }
         if (node->isWord) {
-
-            // cout<<" --> "<<parentStr<<endl;
-            if(parentStr == "") parentStr = "\"\"";
-            tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name + ",\"padre\":"+parentStr+"},";
+            tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name +
+            ",\"padre\":"+parentStr+",\"isword\":\"1\"},";
         }else{
-             // cout<<" --> "<<parentStr<<endl;
-            if(parentStr == "") parentStr = "\"\"";
-            tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name + ",\"padre\":"+parentStr+"},";
+          tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name +
+          ",\"padre\":"+parentStr+",\"isword\":\"0\"},";
+
         }
 
         for (size_t i = 0; i < ALPHABET_LENGTH; i += 1) {
