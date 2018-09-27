@@ -52,6 +52,7 @@ public:
 
 public:
 
+    /* constructor */
     Node() {
         this->str = "";
         this->sons = new Node * [ALPHABET_LENGTH];
@@ -72,18 +73,20 @@ public:
         }
     }
 
+    // cortar cadena de pos al final
     string cut(size_t pos) {
         string rest = str.substr(pos, str.size());
         str = str.substr(0, pos);
         return rest;
     }
-
+    // cortar de inicio a pos
     string reverseCut(size_t pos) {
         string rest = str.substr(0, pos);
         str = str.substr(pos, str.size());
         return rest;
     }
 
+    //determinar si una cadena esta contenida o no  se partira o no esta
     size_t contains(string & otherStr, size_t & i) {
         size_t size = str.size();
         size_t otherSize = otherStr.size();

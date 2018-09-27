@@ -3,16 +3,15 @@
 #include <typeinfo>
 #include <string>
 #include <utility>
-//Models for rtree
-// #include "models/Polygon.cpp"
-// #include "models/Region.cpp"
+
+#include "../core/tree.h"
 #include "../radixset.hpp"
-// Added for the json-example
+
 #define BOOST_SPIRIT_THREADSAFE
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-// Added for the default_resource example
+
 #include <algorithm>
 #include <boost/filesystem.hpp>
 #include <fstream>
@@ -25,29 +24,31 @@ using namespace std;
 using namespace boost::property_tree;
 
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
-struct Point{
-  int x;
-  int y;
-};
 
 int main() {
+    
+clasTest radix = clasTest();
+
+    
+    
+    Tree* t = new Tree();
+    // crear tree con direccion a, b
+    int a, b;
+
     HttpServer server;
-    server.config.port = 8091;
+    server.config.port = 8091;    
 
-    radixset radix = radixset("mundo");
-
-    int count = 1;
-    //Get | get regions and polygons
+    //Get | radix
     server.resource["^/radix$"]["GET"] = [&radix](shared_ptr<HttpServer::Response> response, shared_ptr<HttpServer::Request> request) {
         stringstream stream;
         SimpleWeb::CaseInsensitiveMultimap header;
-        stream << radix.text;
+        stream << radix.str;
         response->write_get(stream,header);
 
     };
 
 
-    //Post | add polygons
+ /*   //Post | add polygons
     server.resource["^/radix$"]["POST"] = [&radix](
             shared_ptr<HttpServer::Response> response,
             shared_ptr<HttpServer::Request> request
@@ -61,7 +62,7 @@ int main() {
             read_json(request->content, pt);
             string newcadena = pt.get<string>("cadena");
             radix.text = newcadena;
-            /*
+            
             for (boost::property_tree::ptree::value_type& rowPair:pt.get_child("polygon")) {
                 for (boost::property_tree::ptree::value_type& itemPair : rowPair.second) {
                     int value = itemPair.second.get_value<int>();
@@ -74,7 +75,7 @@ int main() {
             }
             int identifier_polygon = count++;
             tree->insert(new Polygon<dtype>(pv, identifier_polygon));
-            json_string = "{\"status\": true}";*/
+            json_string = "{\"status\": true}";
             json_string = "{\"status\": true}";
             // json_string += "{ cadena: " + radix.respuestaHola(word) + "}";
             stream << json_string;
@@ -85,40 +86,33 @@ int main() {
                 e.what()
             );
         }
-    };
-    vector<int> v;
-    vector<Point> pv;
-    //Post | add polygons
-    server.resource["^/radix/arrays$"]["POST"] = [&radix,&v,&pv](
-            shared_ptr<HttpServer::Response> response,
-            shared_ptr<HttpServer::Request> request
+    };*/
+
+
+    /* http://localhost:8090/radix/getTree?word=test */
+    server.resource["^/radix/getTree$"]["GET"] = [t,&a,&b](
+        shared_ptr<HttpServer::Response> response,
+        shared_ptr<HttpServer::Request> request
         ) {
 
         stringstream stream;
-        string json_string = "";
         SimpleWeb::CaseInsensitiveMultimap header;
+
+        // capturar dato string para consulta
         try {
-            ptree pt;
-            read_json(request->content, pt);
+            string word;
+            auto query_fields = request->parse_query_string();
+            for(auto &field : query_fields)
+                word = field.second;
 
-            for (boost::property_tree::ptree::value_type& rowPair:pt.get_child("points")) {
-                for (boost::property_tree::ptree::value_type& itemPair : rowPair.second) {
-                    int value = itemPair.second.get_value<int>();
-                    v.push_back(value);
-                }
-            }
-            for (size_t i = 0; i < v.size(); i += 2) {
-                Point point;
-                point.x = v[i];
-                point.y = v[i+1];
-                pv.push_back(point);
-            }
+            //llamado a la funcion del tree
+            t->add(word, a, b);
+            // convertir a stream text para envio
+            stream << t->printjson();
+            //envio de la respuesta
+            response->write_get(stream, header);
 
-            //tree->insert(new Polygon<dtype>(pv, identifier_polygon));
-            json_string = "{\"status\": verdad}";
 
-            stream << json_string;
-            response->write_get(stream,header);
         } catch (const exception &e) {
             response->write(
                 SimpleWeb::StatusCode::client_error_bad_request,
@@ -127,8 +121,8 @@ int main() {
         }
     };
 
-    /* http://localhost:8090/altavista/getOptions?word=test */
-    server.resource["^/radix/getOptions$"]["GET"] = [&radix](
+    /* http://localhost:8090/radix/find?word=test */
+    server.resource["^/radix/find$"]["GET"] = [t,&a,&b](
         shared_ptr<HttpServer::Response> response,
         shared_ptr<HttpServer::Request> request
         ) {
@@ -142,15 +136,14 @@ int main() {
             for(auto &field : query_fields)
                 word = field.second;
 
+            
+             cout<<"FIND INPUT: "<< word <<endl;
 
-            // stream << "HOLA MUNDO";
-            // cout << vectorToJson(list) << endl;
-            // stream << vectorToJson(list);
-            radix.prueba(word);
-            cout<<"world -->"<<word<<endl;
-            stream << radix.text;
+            // stream << radix.test(word);
+            stream << t->find(word);
+
             response->write_get(stream, header);
-            // delete list;
+
 
         } catch (const exception &e) {
             response->write(
@@ -162,8 +155,8 @@ int main() {
 
 
     server.on_error = [](shared_ptr<HttpServer::Request> /*request*/, const SimpleWeb::error_code & /*ec*/) {
-        // Handle errors here
-        // Note that connection timeouts will also call this handle with ec set to SimpleWeb::errc::operation_canceled
+        // manejo de errores
+        // Notar que la connexion  hace timeouts  tambien llama  y maneja la modificacion del  SimpleWeb::errc::operation_canceled
     };
 
     cout << "WEB SERVER IS RUNNNING" << endl;
@@ -172,7 +165,7 @@ int main() {
         server.start();
     });
 
-    // Wait for server to start so that the client can connect
+    // Esperar al servicio para iniciar asi el cliente se conecta
     this_thread::sleep_for(chrono::seconds(1));
     server_thread.join();
 }

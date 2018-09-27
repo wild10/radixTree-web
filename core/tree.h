@@ -41,14 +41,18 @@ public:
 
 
     bool find(string str, Node * & node) {
-        node = root;//root asigna a la variable node del tipo Node
-        Node * next;//inicializa un puntero next del tipo Node
+        node = root; 
+        Node * next;
         string prevStr = str;//palabra a buscar
         size_t result,position = 0;
         while (node) {
+<<<<<<< HEAD
           cout<<"____________________________"<<endl;
           result = node->contains(str, position);
           cout<<"position: "<<position<<endl;
+=======
+          result = node->contains(str, position); // position of p
+>>>>>>> origin/master
           prevStr = str;
           str = str.substr(position);
           cout<<"str: "<<str<<endl;
@@ -63,9 +67,16 @@ public:
               break;
           }
         }
+<<<<<<< HEAD
 
         if ((prevStr == node->str && node->isWord )) {
+=======
+        if ((prevStr == node->str) && node->isWord) {
+        // cout<<"isword: "<<prevStr <<" ="<<node->str<<" : "<< node->isWord<<"- "<<endl;
+        // if(prevStr == node->str){
+>>>>>>> origin/master
             return true;
+        
         }
         return false;
     }
@@ -455,6 +466,7 @@ public:
     }
 
     string graphviz(){
+        //Node * node;
         string str = "digraph G {\n";
         string tree = "";
         graphviz(root, tree);
@@ -471,7 +483,7 @@ public:
     }
     void printjson(Node * & node, string & tree) {
         if ( ! node) {
-            return;
+            return ;
         }
         //j=j+1;
         string name;
@@ -481,19 +493,38 @@ public:
         string parentStr;
         if (node->parent) {
             parentStr = "\"\"";
+<<<<<<< HEAD
           //  if (node->parent->str != "") {
                 char sp[100];
                 sprintf(sp, "\"%p\"", node->parent);
                 parentStr = sp;
           //  }
+=======
+            //if (node->parent->str != "") {
+                char sp[100];
+                sprintf(sp, "\"%p\"", node->parent);
+                parentStr = sp;
+            //}
+>>>>>>> origin/master
         }
 
         if (node->isWord) {
+<<<<<<< HEAD
             tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name +
             ",\"padre\":"+parentStr+",\"isword\":\"1\"},";
         }else{
           tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name +
           ",\"padre\":"+parentStr+",\"isword\":\"0\"},";
+=======
+
+            // cout<<" --> "<<parentStr<<endl;
+            if(parentStr == "") parentStr = "\"\"";
+            tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name + ",\"padre\":"+parentStr+"},";
+        }else{
+             // cout<<" --> "<<parentStr<<endl;
+            if(parentStr == "") parentStr = "\"\"";
+            tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name + ",\"padre\":"+parentStr+"},";
+>>>>>>> origin/master
         }
 
         for (size_t i = 0; i < ALPHABET_LENGTH; i += 1) {
