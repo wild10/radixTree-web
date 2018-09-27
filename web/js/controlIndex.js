@@ -439,7 +439,8 @@ function enviar(){
   document.getElementById('txtInsert').value = ''
 
   var http = new XMLHttpRequest();
-  var url = 'http://localhost:8091/radix/getTree?word='+str.toUpperCase();
+  // var url = 'http://localhost:8091/radix/getTree?word='+str.toUpperCase();
+  var url = 'http://104.248.125.10:8091/radix/getTree?word='+str.toUpperCase();
   var params = 'orem=ipsum&name=binny';
   http.open('GET', url, true);
 
@@ -449,7 +450,7 @@ function enviar(){
       if(http.readyState == 4 && http.status == 200) {
           // respuesta del servidor en array
           // console.log(http.responseText);
-          //alert(http.responseText);
+          // alert(http.responseText);
           var arr = JSON.parse(http.responseText)["tree"];
           // alert(http.responseText);
 
@@ -528,7 +529,8 @@ function buscar(){
     // console.log("input: "+str);
 
     var http = new XMLHttpRequest();
-    var url = 'http://localhost:8091/radix/find?word='+ str.toUpperCase();
+    // var url = 'http://localhost:8091/radix/find?word='+ str.toUpperCase();
+    var url = 'http://104.248.125.10:8091/radix/find?word='+str.toUpperCase();
     var params = 'orem=ipsum&name=binny';
     http.open('GET', url, true);
 
@@ -566,7 +568,8 @@ function eliminar(){
     // console.log("input Delete: "+str);
 
     var http = new XMLHttpRequest();
-    var url = 'http://localhost:8091/radix/delete?word='+ str.toUpperCase();
+    // var url = 'http://localhost:8091/radix/delete?word='+ str.toUpperCase();
+    var url = 'http://104.248.125.10:8091/radix/delete?word='+str.toUpperCase();
     var params = 'orem=ipsum&name=binny';
     http.open('GET', url, true);
 
