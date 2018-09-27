@@ -484,38 +484,20 @@ public:
         string parentStr;
         if (node->parent) {
             parentStr = "\"\"";
-<<<<<<< HEAD
-          //  if (node->parent->str != "") {
-                char sp[100];
-                sprintf(sp, "\"%p\"", node->parent);
-                parentStr = sp;
-          //  }
-=======
             //if (node->parent->str != "") {
                 char sp[100];
                 sprintf(sp, "\"%p\"", node->parent);
                 parentStr = sp;
             //}
->>>>>>> origin/master
         }
 
         if (node->isWord) {
-<<<<<<< HEAD
             tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name +
             ",\"padre\":"+parentStr+",\"isword\":\"1\"},";
         }else{
           tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name +
           ",\"padre\":"+parentStr+",\"isword\":\"0\"},";
-=======
 
-            // cout<<" --> "<<parentStr<<endl;
-            if(parentStr == "") parentStr = "\"\"";
-            tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name + ",\"padre\":"+parentStr+"},";
-        }else{
-             // cout<<" --> "<<parentStr<<endl;
-            if(parentStr == "") parentStr = "\"\"";
-            tree +="{\"valor\":\"" +node->str + "\",\"id\":"+name + ",\"padre\":"+parentStr+"},";
->>>>>>> origin/master
         }
 
         for (size_t i = 0; i < ALPHABET_LENGTH; i += 1) {
