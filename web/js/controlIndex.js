@@ -320,7 +320,7 @@ function update(source) {
 
 function visitElement(element,animX){
  // d3.select("#node-"+element.id).classed("visited",true);
- console.log("->"+element.valor);
+ // console.log("->"+element.valor);
   d3.select("#node-"+element.id)
     .transition().duration(animDuration).delay(animDuration*animX)
     .style("fill","#FF5733").style("stroke","#FF5733");
@@ -340,7 +340,7 @@ function dft(){
     if(element.children!==undefined){
       for(var i=0; i<element.children.length; i++){
         stack.push(element.children[element.children.length-i-1]);
-        console.log("element: "+element.children[element.children.length-i-1].valor);
+        // console.log("element: "+element.children[element.children.length-i-1].valor);
       }
     }
 
@@ -449,7 +449,7 @@ function enviar(){
       if(http.readyState == 4 && http.status == 200) {
           // respuesta del servidor en array
           // console.log(http.responseText);
-          // alert(http.responseText);
+          //alert(http.responseText);
           var arr = JSON.parse(http.responseText)["tree"];
           // alert(http.responseText);
 

@@ -3,6 +3,7 @@
 #include <typeinfo>
 #include <string>
 #include <utility>
+#include <fstream>
 
 #include "../core/tree.h"
 // #include "../radixset.hpp"
@@ -37,6 +38,53 @@ int main() {
 
     HttpServer server;
     server.config.port = 8091;
+
+    server.resource["^/radix/([a-zA-Z]+.html)$"]["GET"] = [](shared_ptr<HttpServer::Response> response, shared_ptr<HttpServer::Request> request) {
+        stringstream stream;
+        SimpleWeb::CaseInsensitiveMultimap header;
+        std::string line;
+        std::string file = "../web/index.html";
+        std::ifstream myfile (file);
+        if (myfile.is_open()){
+            while ( getline (myfile,line) )
+                stream << line << '\n';
+            myfile.close();
+        }
+
+        response->write_html(stream, header);
+    };
+
+     server.resource["^/radix/js/([a-zA-Z.]+.js)$"]["GET"] = [](shared_ptr<HttpServer::Response> response, shared_ptr<HttpServer::Request> request) {
+        stringstream stream;
+        SimpleWeb::CaseInsensitiveMultimap header;
+        std::string line;
+        std::string route = "../web/js/";
+        std::string file = request->path_match[1];
+        std::ifstream myfile (route+file);
+        if (myfile.is_open()){
+            while ( getline (myfile,line) )
+                stream << line << '\n';
+            myfile.close();
+        }
+
+        response->write_html(stream, header);
+    };
+
+    server.resource["^/radix/css/([a-zA-Z.]+.css)$"]["GET"] = [](shared_ptr<HttpServer::Response> response, shared_ptr<HttpServer::Request> request) {
+        stringstream stream;
+        SimpleWeb::CaseInsensitiveMultimap header;
+        std::string line;
+        std::string route = "../web/css/";
+        std::string file = request->path_match[1];
+        std::ifstream myfile (route+file);
+        if (myfile.is_open()){
+            while ( getline (myfile,line) )
+                stream << line << '\n';
+            myfile.close();
+        }
+
+        response->write_html(stream, header);
+    };
 
 /*
     //Get | radix
@@ -110,7 +158,9 @@ int main() {
             t->add(word, a, b);
             // convertir a stream text para envio
             cout<<t->printjson()<<endl;
-            
+            cout<<" -------------------------"<<endl;
+            cout<<t->graphviz()<<endl;
+
             stream << t->printjson();
             //envio de la respuesta
             response->write_get(stream, header);

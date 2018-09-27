@@ -214,6 +214,16 @@ namespace SimpleWeb {
         write(StatusCode::success_ok, std::string(), header);
       }
 
+      void write_html(std::istream &content, CaseInsensitiveMultimap &header) {
+              // Set header fields
+          header.emplace("Content-Type", "text/html");
+          header.emplace("Access-Control-Allow-Origin", "*");
+          header.emplace("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+          header.emplace("Access-Control-Max-Age", "1728000");
+          header.emplace("Access-Control-Allow-Headers", "authorization,content-type");
+        write(StatusCode::success_ok, content, header);
+      }
+
       /// If true, force server to close the connection after the response have been sent.
       ///
       /// This is useful when implementing a HTTP/1.0-server sending content
