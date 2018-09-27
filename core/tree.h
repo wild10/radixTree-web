@@ -46,13 +46,10 @@ public:
         string prevStr = str;//palabra a buscar
         size_t result,position = 0;
         while (node) {
-<<<<<<< HEAD
-          cout<<"____________________________"<<endl;
           result = node->contains(str, position);
           cout<<"position: "<<position<<endl;
-=======
           result = node->contains(str, position); // position of p
->>>>>>> origin/master
+
           prevStr = str;
           str = str.substr(position);
           cout<<"str: "<<str<<endl;
@@ -67,14 +64,8 @@ public:
               break;
           }
         }
-<<<<<<< HEAD
 
         if ((prevStr == node->str && node->isWord )) {
-=======
-        if ((prevStr == node->str) && node->isWord) {
-        // cout<<"isword: "<<prevStr <<" ="<<node->str<<" : "<< node->isWord<<"- "<<endl;
-        // if(prevStr == node->str){
->>>>>>> origin/master
             return true;
         
         }
